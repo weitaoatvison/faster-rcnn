@@ -36,6 +36,7 @@ class pascal_voc(imdb):
         self._class_to_ind = dict(zip(self.classes, xrange(self.num_classes)))
         self._image_ext = '.jpg'
         self._image_index = self._load_image_set_index()
+
         # Default to roidb handler
         self._roidb_handler = self.selective_search_roidb
         self._salt = str(uuid.uuid4())
@@ -89,6 +90,7 @@ class pascal_voc(imdb):
         Return the default path where PASCAL VOC is expected to be installed.
         """
         return os.path.join(cfg.DATA_DIR, 'VOCdevkit' + self._year)
+
 
     def gt_roidb(self):
         """
