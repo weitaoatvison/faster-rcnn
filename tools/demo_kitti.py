@@ -1,18 +1,5 @@
 #!/usr/bin/env python
 
-# --------------------------------------------------------
-# Faster R-CNN
-# Copyright (c) 2015 Microsoft
-# Licensed under The MIT License [see LICENSE for details]
-# Written by Ross Girshick
-# --------------------------------------------------------
-
-"""
-Demo script showing detections in sample images.
-
-See README.md for installation instructions before running.
-"""
-
 import _init_paths
 from fast_rcnn.config import cfg
 from fast_rcnn.test import im_detect
@@ -24,16 +11,9 @@ import scipy.io as sio
 import caffe, os, sys, cv2
 import argparse
 
-# CLASSES = ('__background__','Car', 'Van', 'Truck', 'Cyclist','Pedestrian', 'Person_sitting', 'Tram', 'Misc' ,'DontCare')
-CLASSES = ('__background__',
-           'aeroplane', 'bicycle', 'bird', 'boat',
-           'bottle', 'bus', 'car', 'cat', 'chair',
-           'cow', 'diningtable', 'dog', 'horse',
-           'motorbike', 'person', 'pottedplant',
-           'sheep', 'sofa', 'train', 'tvmonitor')
+CLASSES = ('__background__','Car', 'Van', 'Truck', 'Cyclist','Pedestrian', 'Person_sitting', 'Tram', 'Misc' ,'DontCare')
 
-NETS = {'vgg16': ('VGG16', 'VGG16_faster_rcnn_final.caffemodel'),
-        'zf': ('ZF', 'ZF_faster_rcnn_final.caffemodel')}
+NETS = {'vgg16': ('VGG16', 'VGG16_faster_rcnn_final.caffemodel')}
 
 
 def vis_detections(im, class_name, dets, thresh=0.5):
@@ -45,10 +25,14 @@ def vis_detections(im, class_name, dets, thresh=0.5):
     for i in inds:
         bbox = dets[i, :4]
         score = dets[i, -1]
-        cv2.rectangle(im,(bbox[0], bbox[1]),(bbox[2],bbox[3]),(0,255,0),2)
-        cv2.putText(im,'{:s}'.format(class_name),(int(bbox[0]), int(bbox[1] - 2)), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0 ,255))
 
-def demo(net, image_name):
+        for li in range(4):
+            bbox[li] = int(bbox[li])
+        cv2.rectangle(im, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0,0,255), thickness=2)
+        # cv2.putText(im, '%s %.3f' % (class_name, score), (int(bbox[0]), int(bbox[1] - 2)), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.6, color=(0,0,255), thickness=2)
+
+
+def demo(net, image_name,idx):
     """Detect object classes in an image using pre-computed object proposals."""
 
     # Load the demo image
@@ -64,7 +48,7 @@ def demo(net, image_name):
     print ('Detection took {:.3f}s for {:d} object proposals').format(timer.total_time, boxes.shape[0])
 
     # Visualize detections for each class
-    CONF_THRESH = 0.8
+    CONF_THRESH = 0.6
     NMS_THRESH = 0.3
     for cls_ind, cls in enumerate(CLASSES[1:]):
         cls_ind += 1 # because we skipped background
@@ -75,6 +59,8 @@ def demo(net, image_name):
         dets = dets[keep, :]
         vis_detections(im, cls, dets, thresh=CONF_THRESH)
     cv2.imshow('res', im)
+    fileName = '/home/lbin/Desktop/imgs/%05d.jpg'%i
+    # cv2.imwrite(fileName,im)
     cv2.waitKey(1)
 
 def parse_args():
@@ -97,9 +83,16 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    prototxt = os.path.join(cfg.MODELS_DIR, NETS[args.demo_net][0], 'faster_rcnn_alt_opt', 'faster_rcnn_test.pt')
-    caffemodel = os.path.join(cfg.DATA_DIR, 'faster_rcnn_models', NETS[args.demo_net][1])
+    # prototxt = os.path.join(cfg.MODELS_DIR, NETS[args.demo_net][0], 'faster_rcnn_alt_opt', 'faster_rcnn_test.pt')
+    # caffemodel = os.path.join(cfg.DATA_DIR, 'faster_rcnn_models', NETS[args.demo_net][1])
+    # prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/faster_rcnn_end2end/test.prototxt')
+    # caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/output/faster_rcnn_end2end/kitti__train/vgg16_faster_rcnn_iter_70000.caffemodel')
 
+    # prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/GoogLeNet/faster_rcnn_end2end/test.prototxt')
+    # caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/output/faster_rcnn_end2end/kitti__train/GoogLeNet_faster_rcnn_iter_10000.caffemodel')
+
+    prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/faster_rcnn_end2end/test.prototxt')
+    caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/vgg16_faster_rcnn_iter_70000_kitti.caffemodel')
     if not os.path.isfile(caffemodel):
         raise IOError(('{:s} not found.\nDid you run ./data/script/' 'fetch_faster_rcnn_models.sh?').format(caffemodel))
 
@@ -114,9 +107,9 @@ if __name__ == '__main__':
     #     _, _= im_detect(net, im)
 
     print '\n\nLoaded network {:s}'.format(caffemodel)
-    # im_path = '/home/lbin/workspace/Data/3rdparty/kitti/detection/data_object_image_2/testing/image_2/'
-    im_path = '/home/lbin/workspace/Data/3rdparty/kitti/VO/dataset/sequences/00/image_0/'
+    im_path = '/home/lbin/workspace/Data/3rdparty/kitti/visual odometry/dataset_color/sequences/18/image_2/'
+    # im_path = '/home/lbin/workspace/Data/3rdparty/kitti/VO/dataset/sequences/18/image_0/'
     cv2.namedWindow('res',cv2.WINDOW_NORMAL)
-    for i in range(7518):
+    for i in range(10000):
         im_name = im_path + '%06d.png' %i
-        demo(net, im_name)
+        demo(net, im_name,i)
