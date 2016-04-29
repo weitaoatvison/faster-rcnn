@@ -81,9 +81,14 @@ if __name__ == '__main__':
     cfg.TEST.HAS_RPN = True  # Use RPN for proposals
 
     args = parse_args()
-
-    prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/test.prototxt')
-    caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/vgg16_faster_rcnn_iter_100000.caffemodel')
+    
+    # VGG
+    # prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/test.prototxt')
+    # caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/vgg16_faster_rcnn_iter_100000.caffemodel')
+       
+    # GoogLeNet
+    prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/GoogLeNet/test.prototxt')
+    caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/GoogLeNet_faster_rcnn_iter_150000.caffemodel')
 
     caffe.set_mode_gpu()
     caffe.set_device(args.gpu_id)
