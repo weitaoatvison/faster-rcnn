@@ -48,7 +48,7 @@ def demo(net, image_name,idx):
     print ('Detection took {:.3f}s for {:d} object proposals').format(timer.total_time, boxes.shape[0])
 
     # Visualize detections for each class
-    CONF_THRESH = 0.6
+    CONF_THRESH = 0.9
     NMS_THRESH = 0.3
     for cls_ind, cls in enumerate(CLASSES[1:]):
         cls_ind += 1 # because we skipped background
@@ -60,7 +60,6 @@ def demo(net, image_name,idx):
         vis_detections(im, cls, dets, thresh=CONF_THRESH)
     cv2.imshow('res', im)
     fileName = '/home/lbin/Desktop/imgs/%05d.jpg'%i
-    # cv2.imwrite(fileName,im)
     cv2.waitKey(1)
 
 def parse_args():
@@ -83,18 +82,8 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    # prototxt = os.path.join(cfg.MODELS_DIR, NETS[args.demo_net][0], 'faster_rcnn_alt_opt', 'faster_rcnn_test.pt')
-    # caffemodel = os.path.join(cfg.DATA_DIR, 'faster_rcnn_models', NETS[args.demo_net][1])
-    # prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/faster_rcnn_end2end/test.prototxt')
-    # caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/output/faster_rcnn_end2end/kitti__train/vgg16_faster_rcnn_iter_70000.caffemodel')
-
-    # prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/GoogLeNet/faster_rcnn_end2end/test.prototxt')
-    # caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/output/faster_rcnn_end2end/kitti__train/GoogLeNet_faster_rcnn_iter_10000.caffemodel')
-
-    prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/faster_rcnn_end2end/test.prototxt')
-    caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/vgg16_faster_rcnn_iter_70000_kitti.caffemodel')
-    if not os.path.isfile(caffemodel):
-        raise IOError(('{:s} not found.\nDid you run ./data/script/' 'fetch_faster_rcnn_models.sh?').format(caffemodel))
+    prototxt = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/models/kitti/VGG16/test.prototxt')
+    caffemodel = os.path.join('/home/lbin/workspace/DL/py-faster-rcnn/data/faster_rcnn_models/vgg16_faster_rcnn_iter_100000.caffemodel')
 
     caffe.set_mode_gpu()
     caffe.set_device(args.gpu_id)
@@ -102,13 +91,8 @@ if __name__ == '__main__':
 
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
 
-    # im = 128 * np.ones((300, 500, 3), dtype=np.uint8)
-    # for i in xrange(2):
-    #     _, _= im_detect(net, im)
-
     print '\n\nLoaded network {:s}'.format(caffemodel)
-    im_path = '/home/lbin/workspace/Data/3rdparty/kitti/visual odometry/dataset_color/sequences/18/image_2/'
-    # im_path = '/home/lbin/workspace/Data/3rdparty/kitti/VO/dataset/sequences/18/image_0/'
+    im_path = '/home/lbin/workspace/Data/3rdparty/kitti/visual odometry/dataset_color/sequences/03/image_2/'
     cv2.namedWindow('res',cv2.WINDOW_NORMAL)
     for i in range(10000):
         im_name = im_path + '%06d.png' %i

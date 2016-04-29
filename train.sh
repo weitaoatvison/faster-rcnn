@@ -5,18 +5,19 @@ set -e
 export PYTHONUNBUFFERED="True"
 
 GPU_ID=0
-NET=VGG16
+NET=GoogLeNet
 #VGG16 GoogLeNet
 NET_lc=${NET,,}
 DATASET=kitti
-PRETRAINWEIGHT="./data/imagenet_models/VGG16.v2.caffemodel"
+# PRETRAINWEIGHT="./data/imagenet_models/VGG16.v2.caffemodel"
+PRETRAINWEIGHT="./data/imagenet_models/GoogLeNet.caffemodel"
 
 case $DATASET in
   kitti)
     TRAIN_IMDB="kitti_train"
     TEST_IMDB="kitti_test"
     PT_DIR="kitti"
-    ITERS=100000
+    ITERS=150000
     ;;
   *)
     echo "No dataset given"
