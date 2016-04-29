@@ -13,6 +13,8 @@ from generate_anchors import generate_anchors
 from fast_rcnn.bbox_transform import bbox_transform_inv, clip_boxes
 from fast_rcnn.nms_wrapper import nms
 
+#import os  #D
+
 DEBUG = False
 
 class ProposalLayer(caffe.Layer):
@@ -43,6 +45,7 @@ class ProposalLayer(caffe.Layer):
         # scores blob: holds scores for R regions of interest
         if len(top) > 1:
             top[1].reshape(1, 1, 1, 1)
+        # self.iter = 0 #D
 
     def forward(self, bottom, top):
         # Algorithm:
@@ -146,6 +149,28 @@ class ProposalLayer(caffe.Layer):
             keep = keep[:post_nms_topN]
         proposals = proposals[keep, :]
         scores = scores[keep]
+        
+        
+        # D
+        # img = bottom[3].data
+        # img = np.transpose(img, (0, 2, 3, 1))[0]
+        # img += np.array([102.9801, 115.9465, 122.7717])
+        # img = img.astype(np.uint8)
+        # import cv2
+        # def check(prop, img):
+        #     prop[0] = max(0, prop[0])
+        #     prop[1] = max(0, prop[1])
+        #     prop[2] = min(img.shape[1], prop[2])
+        #     prop[3] = min(img.shape[0], prop[3])
+        #     return prop
+
+        # scores = scores[keep]
+
+        # if len(proposals) == 0:
+        #     proposals = np.zeros((1,4))
+        #     proposals[2] = 1
+        #     proposals[3] = 1
+        # D - END
 
         # Output rois blob
         # Our RPN implementation only supports a single input image, so all
